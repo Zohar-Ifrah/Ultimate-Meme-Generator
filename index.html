@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>MemeGen</title>
+</head>
+
+<body onload="onInit()">
+
+    <!-- <div class="main-screen" onclick="toggleMenu()"></div> -->
+    <header class="main-header flex space-between align-center">
+        <div class="logo">MemeGen</div>
+        <nav class="main-nav-container flex">
+            <div class="main-nav">
+                <label onclick="togglePages(innerText)">Gallery</label>
+                <label onclick="togglePages(innerText)">Meme</label>
+                <label onclick="togglePages(innerText)">About</label>
+            </div>
+        </nav>
+        <!-- <button class="btn-menu" onclick="toggleMenu()">☰</button> -->
+    </header>
+
+    <main class="meme-page flex space-between">
+
+        <div class="canvas-container">
+            <canvas id="canvas" width="450" height="450" onclick="draw(event)"
+                style="outline: 1px solid rgb(9, 0, 128)"></canvas>
+        </div>
+
+        <div class="meme-editor-container flex space-between">
+            <input type="text" placeholder="type your meme here" oninput="onTyping(value)">
+            <div class="first-section-btns">
+                <button><img src="icons/up-and-down-opposite-double-arrows-side-by-side.png" alt=""></button>
+                <button><img src="icons/add.png" alt=""></button>
+                <button><img src="icons/trash.png" alt=""></button>
+            </div>
+            <div class="second-section-btns">
+                <button><img src="icons/increase font - icon.png" alt=""></button>
+                <button><img src="icons/decrease font - icon.png" alt=""></button>
+                <button><img src="icons/align-to-left.png" alt=""></button>
+                <button><img src="icons/center-text-alignment.png" alt=""></button>
+                <button><img src="icons/align-to-right.png" alt=""></button>
+                <select onchange="setShape(value)">
+                    <option label="Impact"></option>
+                    <option label="font"></option>
+                    <option label="font"></option>
+                    <option label="font"></option>
+                    <option label="font"></option>
+                </select>
+                <button><img src="icons/text stroke.png" alt=""></button>
+                <button><img src="icons/paint-board-and-brush.png" alt=""></button>
+                <input type="color" name="color" id="fill-color">
+                <input type="color" name="col" id="strike-color">
+            </div>
+            <input type="file" class="file-input btn" name="image" onchange="onImgInput(event)" />
+
+            <!-- To add Slide Bar
+            <button class="btn" onclick="onUploadImg()">Share</button>
+            <a href="#" class="btn" onclick="downloadImg(this)" download="untitled.jpg">Download</a> -->
+        </div>
+
+    </main>
+
+    <div class="gallery-page hide">
+        <section>
+            <input type="search">
+            <!-- TO ADD KEY WORDS -->
+        </section>
+
+        <main class="imgs-gallery-container"></main>
+
+    </div>
+
+    <script src="js/services/util.services.js"></script>
+    <script src="js/services/gallery.services.js"></script>
+    <script src="js/services/meme.services.js"></script>
+    <script src="js/gallery.controller.js"></script>
+    <script src="js/meme.controller.js"></script>
+</body>
+
+</html>

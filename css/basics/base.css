@@ -1,0 +1,47 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: playfair, serif;
+    color: var(--clr1);
+    line-height: 1.7142857;
+}
+
+body {
+    margin: 0;
+    /* font-size: 0.875rem; */
+    background-color: #0fa2a2;
+
+}
+
+.meme-editor-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.meme-editor-container img {
+    height: 1em;
+}
+
+.main-header {
+    background-color: #2f2fbf;
+}
+
+.main-nav {
+    flex-direction: row;
+    display: flex;
+    gap: 3em;
+}
+
+.imgs-gallery-container {
+    display: grid;
+    grid-template-columns: repeat(4,auto);
+    grid-template-rows: repeat(4,auto);
+    gap: 1em;
+    margin-block-start: 2em;
+}
+
+.imgs-gallery-container img {
+    height: 14em;
+}
