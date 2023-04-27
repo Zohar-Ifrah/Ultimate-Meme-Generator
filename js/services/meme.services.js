@@ -1,3 +1,10 @@
+
+const MEME_STORAGE_KEY = 'memesDB'
+const IMG_STORAGE_KEY = 'imgDB'
+const SORT_KEY = 'sortBy'
+
+var gDlMemes = []
+var gDlImgs = []
 var gKeywordSearchCountMap = { 'funny': 12, 'cat': 16, 'baby': 2, 'evil': 3, 'cute': 7, 'old': 4, 'movie': 5 }
 
 var gImgs = [
@@ -39,9 +46,11 @@ var gMeme = {
         align: 'center',
         fillColor: '#2522E2',
         strokeColor: '#100F0F',
-        // pos: {}
+        // pos: { x: 0, y: 0, w: 2, h: 0 }
     }]
 }
+
+_loadMemes() // first load of dl data
 
 function getgImgs() {
     return gImgs
@@ -98,4 +107,34 @@ function changeTxtSide(side) {
 
 function changeFont(font) {
     gMeme.font = `px ${font}`
+}
+
+function saveMeme(url){
+    gDlImgs.push({id: makeId(), url: url})
+    gDlMemes.push(gMeme)
+
+    saveToStorage(IMG_STORAGE_KEY, gDlImgs)
+    saveToStorage(MEME_STORAGE_KEY, gDlMemes)
+}
+
+function _loadMemes() {
+    let memes = loadFromStorage(MEME_STORAGE_KEY)
+    let imgs = loadFromStorage(IMG_STORAGE_KEY)
+
+    // If nothing in storage - creates an empty array
+    if (!memes || !memes.length || !imgs || !imgs.length) {
+        memes = []
+        imgs =[]
+    }
+
+    gDlMemes = memes
+    gDlImgs = imgs
+}
+
+function getgDlImgs(){
+    return gDlImgs
+}
+
+function getgDlMemes(){
+    return gDlMemes
 }

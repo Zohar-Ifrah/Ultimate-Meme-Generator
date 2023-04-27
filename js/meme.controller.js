@@ -7,6 +7,7 @@ function onInit() {
     gElCanvas = document.getElementById('canvas')
     gCtx = gElCanvas.getContext('2d')
     renderGallery()
+    renderGallery2()
     // resizeCanvas()
 
     //temp:
@@ -26,6 +27,17 @@ function renderGallery() {
     document.querySelector('.imgs-gallery-container').innerHTML = strHTML
 }
 
+function renderGallery2() {
+    const imgs = getgDlImgs()
+
+    var strHTML = ''
+    strHTML += imgs.map((img) => `
+    <img src="${img.url}" onclick="onMemeSelect(this)" width="250" height="250" style="opacity: 1;">`
+    ).join('')
+
+    document.querySelector('.memes-gallery-container').innerHTML = strHTML
+}
+
 function renderImg() {
     const imgs = getgImgs()
     const currMeme = getgMeme()
@@ -36,7 +48,7 @@ function renderImg() {
         gCtx.drawImage(elImg, 0, 0, gElCanvas.width, gElCanvas.height)
 
         if (currMeme.lines.length > 0) { // if there are no lines
-
+            // let yyy
             const coords = [
                 { x: 0, y: gElCanvas.height / 6 },
                 { x: 0, y: gElCanvas.height / 1.1 },
@@ -56,7 +68,7 @@ function renderImg() {
                 gCtx.font = line.size + currMeme.font
                 gCtx.textAlign = line.align
                 gCtx.textBaseline = 'middle'
-                
+
 
                 // if out of the canvas width split text
                 const words = line.txt.split(' ')
@@ -77,12 +89,24 @@ function renderImg() {
                 })
                 gCtx.strokeText(lineText.trim(), coords[idx].x, y)
                 gCtx.fillText(lineText.trim(), coords[idx].x, y)
+
+                // yyy = y 
             })
             // handeling HTML view for curr line selected
             const memeLines = currMeme.lines[currMeme.selectedLineIdx]
             handelHTML('meme-text-input', memeLines.txt)
             handelHTML('fill-color', memeLines.fillColor)
             handelHTML('stroke-color', memeLines.strokeColor)
+
+            // gCtx.strokeStyle = 'black'
+            // gCtx.lineWidth = 2
+            // memeLines.pos.x = coords[currMeme.selectedLineIdx].x - 25
+            // memeLines.pos.y = coords[currMeme.selectedLineIdx].y - 35
+            // memeLines.pos.w = memeLines.size + 2
+            // memeLines.pos.h = yyy - memeLines.pos.y
+
+            // gCtx.strokeRect(memeLines.pos.x, memeLines.pos.y, memeLines.pos.w, memeLines.pos.h)
+
         }
     }
 }
@@ -110,7 +134,7 @@ function onImgSelect(img) {  // gets: this (element)
 
     setgMeme(currMeme)
     renderImg()
-    togglePages('Meme')
+    togglePages('Editor')
 }
 
 // add a default line from services
@@ -235,7 +259,7 @@ function onFlexibleSelect() {
 
     setgMeme(randMeme)
     renderImg()
-    togglePages('Meme')
+    togglePages('Editor')
 }
 
 // disabled or avtive the btns if there are no lines 
@@ -250,6 +274,17 @@ function handelBtns(isDisable) {
 function downloadImg(elLink) {
     const imgContent = gElCanvas.toDataURL('image/jpeg') // image/jpeg the default format
     elLink.href = imgContent
+}
+
+// saving meme details and img in services
+// can retrive data and edit again
+function onSavingMeme() {
+    const imgContent = gElCanvas.toDataURL('image/jpeg')
+    doUploadImg(imgContent, url => saveMeme(url))
+}
+
+function onToggleMenu() {
+    document.body.classList.toggle('menu-open');
 }
 
 
