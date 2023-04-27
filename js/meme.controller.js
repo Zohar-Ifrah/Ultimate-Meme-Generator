@@ -246,6 +246,12 @@ function handelBtns(isDisable) {
     document.getElementById('stroke-color').disabled = isDisable
 }
 
+// download img to user's pc
+function downloadImg(elLink) {
+    const imgContent = gElCanvas.toDataURL('image/jpeg') // image/jpeg the default format
+    elLink.href = imgContent
+}
+
 
 
 

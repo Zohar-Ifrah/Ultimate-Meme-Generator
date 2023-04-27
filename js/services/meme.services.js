@@ -38,7 +38,8 @@ var gMeme = {
         size: 35,
         align: 'center',
         fillColor: '#2522E2',
-        strokeColor: '#100F0F'
+        strokeColor: '#100F0F',
+        // pos: {}
     }]
 }
 
