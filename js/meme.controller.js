@@ -37,13 +37,14 @@ function renderImg() {
 
         if (currMeme.lines.length > 0) { // if there are no lines
 
-            let currIdx
             const coords = [
                 { x: 0, y: gElCanvas.height / 6 },
                 { x: 0, y: gElCanvas.height / 1.1 },
                 { x: 0, y: gElCanvas.height / 2 },]
 
             currMeme.lines.forEach((line, idx) => {
+
+                if (idx > 2) idx = 2 // for more then 3 texts - pos: mid
 
                 //setting coords according to the aling value
                 if (line.align === 'center') coords[idx].x = gElCanvas.width / 2
@@ -55,13 +56,13 @@ function renderImg() {
                 gCtx.font = line.size + currMeme.font
                 gCtx.textAlign = line.align
                 gCtx.textBaseline = 'middle'
-                idx < 3 ? currIdx = idx : currIdx = 2
+                
 
                 // if out of the canvas width split text
                 const words = line.txt.split(' ')
                 const lineHeight = line.size * 1.2
                 let lineText = ''
-                let y = coords[currIdx].y
+                let y = coords[idx].y
 
                 words.forEach(word => {
                     const textWidth = gCtx.measureText(lineText + word + ' ').width
