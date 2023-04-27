@@ -24,37 +24,49 @@
         <!-- <button class="btn-menu" onclick="toggleMenu()">☰</button> -->
     </header>
 
-    <main class="meme-page flex space-between">
+    <main class="meme-page flex space-between hide">
 
         <div class="canvas-container">
-            <canvas id="canvas" width="450" height="450" onclick="draw(event)"
-                style="outline: 1px solid rgb(9, 0, 128)"></canvas>
+            <canvas id="canvas" width="600" height="600" onclick="draw(event)"></canvas>
         </div>
 
         <div class="meme-editor-container flex space-between">
-            <input type="text" placeholder="type your meme here" oninput="onTyping(value)">
+            <input id="meme-text-input" type="text" placeholder="type your meme here" oninput="onTyping(value)">
             <div class="first-section-btns">
-                <button><img src="icons/up-and-down-opposite-double-arrows-side-by-side.png" alt=""></button>
-                <button><img src="icons/add.png" alt=""></button>
-                <button><img src="icons/trash.png" alt=""></button>
+                <button onclick="onSwitchLine()"><img src="icons/up-and-down-opposite-double-arrows-side-by-side.png" alt=""></button>
+                <button onclick="onAddLine()"><img src="icons/add.png" alt=""></button>
+                <button onclick="onDeleteLine()"><img src="icons/trash.png" alt=""></button>
             </div>
             <div class="second-section-btns">
-                <button><img src="icons/increase font - icon.png" alt=""></button>
-                <button><img src="icons/decrease font - icon.png" alt=""></button>
-                <button><img src="icons/align-to-left.png" alt=""></button>
-                <button><img src="icons/center-text-alignment.png" alt=""></button>
-                <button><img src="icons/align-to-right.png" alt=""></button>
-                <select onchange="setShape(value)">
-                    <option label="Impact"></option>
-                    <option label="font"></option>
-                    <option label="font"></option>
-                    <option label="font"></option>
-                    <option label="font"></option>
-                </select>
-                <button><img src="icons/text stroke.png" alt=""></button>
-                <button><img src="icons/paint-board-and-brush.png" alt=""></button>
-                <input type="color" name="color" id="fill-color">
-                <input type="color" name="col" id="strike-color">
+                <button class="increase-btn" onclick="onChageFontSize('+')"><img src="icons/increase font - icon.png" alt=""></button>
+                <button class="decrease-btn" onclick="onChageFontSize('-')"><img src="icons/decrease font - icon.png" alt=""></button>
+                <button class="align-left-btn" onclick="onChageTxtSide('left')"><img src="icons/align-to-left.png" alt=""></button>
+                <button class="align-center-btn" onclick="onChageTxtSide('center')"><img src="icons/center-text-alignment.png" alt=""></button>
+                <button class="align-right-btn" onclick="onChageTxtSide('right')"><img src="icons/align-to-right.png" alt=""></button>
+                <select onchange="onChangeFont(this.value)">
+                    <option value="cursive">Impact</option>
+                    <option value="sans-serif">Arial</option>
+                    <option value="Arial Narrow">Arial Narrow</option>
+                    <option value="serif">Times New Roman</option>
+                    <option value="monospace">Courier New</option>
+                    <option value="fantasy">Comic Sans MS</option>
+                    <option value="Brush Script MT">Brush Script MT</option>
+                    <option value="Lucida Handwriting">Lucida Handwriting</option>
+                    <option value="Segoe Script">Segoe Script</option>
+                    <option value="Bradley Hand">Bradley Hand</option>
+                    <option value="Helvetica">Helvetica</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Tahoma">Tahoma</option>
+                    <option value="Lucida Sans Unicode">Lucida Sans Unicode</option>
+                    <option value="Trebuchet MS">Trebuchet MS</option>
+                  </select>
+                  
+                <!-- <button><img src="icons/text stroke.png" alt="" type="color"></button>
+                <button><img src="icons/paint-board-and-brush.png" alt=""></button> -->
+                <input oninput="onChageColor(id, value)" type="color" id="fill-color">
+                <input oninput="onChageColor(id, value)" type="color" id="stroke-color">
             </div>
             <input type="file" class="file-input btn" name="image" onchange="onImgInput(event)" />
 
@@ -65,9 +77,10 @@
 
     </main>
 
-    <div class="gallery-page hide">
+    <div class="gallery-page">
         <section>
             <input type="search">
+            <button onclick="onFlexibleSelect()">I'm flexible</button>
             <!-- TO ADD KEY WORDS -->
         </section>
 

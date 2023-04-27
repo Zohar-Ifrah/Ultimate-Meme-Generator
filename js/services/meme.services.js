@@ -2,8 +2,8 @@ var gKeywordSearchCountMap = { 'funny': 12, 'cat': 16, 'baby': 2, 'evil': 3, 'cu
 
 var gImgs = [
     { id: 1, url: 'meme-imgs/1.jpg', keywords: ['funny', 'president', 'evil', 'old'] },
-    { id: 2, url: 'meme-imgs/2.jpg', keywords: ['cute'] },
-    { id: 3, url: 'meme-imgs/3.jpg', keywords: ['baby', 'cute'] },
+    { id: 2, url: 'meme-imgs/2.jpg', keywords: ['cute', 'dog'] },
+    { id: 3, url: 'meme-imgs/3.jpg', keywords: ['baby', 'cute', 'dog'] },
     { id: 4, url: 'meme-imgs/4.jpg', keywords: ['cat', 'cute'] },
     { id: 5, url: 'meme-imgs/5.jpg', keywords: ['baby'] },
     { id: 6, url: 'meme-imgs/6.jpg', keywords: ['funny', ''] },
@@ -20,17 +20,26 @@ var gImgs = [
     { id: 17, url: 'meme-imgs/17.jpg', keywords: ['old', 'president', 'evil'] },
     { id: 18, url: 'meme-imgs/18.jpg', keywords: ['movie'] },
 ]
+
+var gTxtsOneLine = ['MEOW', 'i\'m not tired', 'i\'ll do my best']
+
+var gTxtsTwoLines = [
+    ['you can\'t get fired', 'if you don\'t have a job'],
+    ['him: calm down', 'me: I\'m calm down'],
+    ['HAPPY BIRTHDAY', 'you don\'t look a day over 50!']
+]
+
 var gMeme = {
-    selectedImgId: 5,
+    selectedImgId: 1,
     selectedLineIdx: 0,
-    lines: [
-        {
-            txt: 'I sometimes eat Falafel',
-            size: 20,
-            align: 'left',
-            color: 'red'
-        }
-    ]
+    font: 'px Impact',
+    lines: [{
+        txt: '',
+        size: 35,
+        align: 'center',
+        fillColor: '#2522E2',
+        strokeColor: '#100F0F'
+    }]
 }
 
 function getgImgs() {
@@ -45,14 +54,47 @@ function getgMeme() {
     return gMeme
 }
 
-function setgMeme(url) {
-    const img = getImg(0, url)
-    gMeme.selectedImgId = img.id
+function setgMeme(editedMeme) {
+    gMeme = editedMeme
 }
 
-function getImg(imgID = 0, url = 0) {  // edit later // edit later // edit later
-    let img
-    imgID ? img = gImgs.find(img => img.id === imgID) 
-    : img = gImgs.find(img => img.url === url)  
-    return img
+function addMemeLine() {
+    gMeme.lines.push(
+        {
+            txt: '',
+            size: 40,
+            align: 'center',
+            fillColor: '#2522E2',
+            strokeColor: '#100F0F'
+        })
+    gMeme.selectedLineIdx = gMeme.lines.length - 1
+}
+
+function deleteLine() {
+    gMeme.lines.splice(gMeme.selectedLineIdx, 1)
+    if (gMeme.lines.length !== 0) { // if not empty
+        gMeme.selectedLineIdx === 0 ? gMeme.selectedLineIdx++ : gMeme.selectedLineIdx--
+        if (gMeme.lines.length === 1) gMeme.selectedLineIdx = 0 //in case of only 1 line left
+    }
+    else gMeme.selectedLineIdx = -1 // empty
+}
+
+function resetLines() {
+    gMeme.lines = []
+}
+
+function getgTxtsOneLine() {
+    return gTxtsOneLine
+}
+
+function getgTxtsTwoLines() {
+    return gTxtsTwoLines
+}
+
+function changeTxtSide(side) {
+    gMeme.lines.forEach(line => line.align = side)
+}
+
+function changeFont(font) {
+    gMeme.font = `px ${font}`
 }

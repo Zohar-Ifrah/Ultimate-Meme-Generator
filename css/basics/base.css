@@ -45,3 +45,8 @@ body {
 .imgs-gallery-container img {
     height: 14em;
 }
+
+#canvas {
+    border: 1px solid rgb(9, 0, 128);
+    /* outline: none; */
+  }
