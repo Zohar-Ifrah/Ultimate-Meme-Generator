@@ -1,11 +1,11 @@
-/* .main-layout {
+.main-layout {
     display: grid;
     
     grid-template-columns:
         minmax(var(--layout-padding), 1fr)
         minmax(auto, var(--site-width))
         minmax(var(--layout-padding), 1fr);
-} */
+}
 
 /* .main-layout > *:not(.full) {
     grid-column: 2;
