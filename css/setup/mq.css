@@ -14,6 +14,11 @@
 
 /* UNTIL MEDIUM */
 @media (max-width: 900px) {
+    .logo {
+        font-size: 1em;
+    }
+    
+    
     .main-nav-container {
         position: fixed;
         z-index: 1;
@@ -80,6 +85,9 @@
     :root {
         --site-width: var(--s);
     }
+    .logo {
+        font-size: 1.7em;
+    }
 }
 
 /* MEDIUM */
@@ -100,6 +108,9 @@
     .main-nav label:hover {
         color: #8febeb;
         text-decoration: underline;
+    }
+    .logo {
+        font-size: 1.7em;
     }
 
 }

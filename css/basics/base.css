@@ -2,15 +2,11 @@
     box-sizing: border-box;
 }
 
-html {
-    color: var(--clr1);
-    line-height: 1.7142857;
-}
-
 body {
     margin: 0;
     background-color: #22252C;
     font-family: cursive;
+    /* color: var(--clr1); */
 }
 
 .editor-page {
@@ -45,9 +41,7 @@ body {
 
 .main-nav {
     display: flex;
-    /* flex-direction: row; */
     margin-inline: 1em;
-    /* align-items: flex-start; */
 }
 
 .memes-gallery-container {
@@ -80,15 +74,6 @@ body {
     margin-inline-start: 12px;
 }
 
-.card .card-image {
-    margin-bottom: 1.875rem;
-}
-
-.card .card-tag {
-    font-family: ubuntu, sans-serif;
-    color: var(--clr-1);
-    text-transform: uppercase;
-}
 
 img {
     width: 100%;

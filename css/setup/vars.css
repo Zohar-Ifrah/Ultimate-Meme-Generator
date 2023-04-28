@@ -4,9 +4,8 @@
     --clr2: #0d5ba3;
 
     /* Layout */
-    --layout-padding: 1.25rem;
     --site-width: max-content;
     --l: 1060px;
     --m: 860px;
-    --s: 600px;
+    --s: 700px;
 }

@@ -1,5 +1,5 @@
 .logo {
     font-family: fantasy;
-    font-size: 1.7em;
     text-transform: uppercase;
+    color: var(--clr1);
 }
