@@ -40,14 +40,7 @@ var gMeme = {
     selectedImgId: 1,
     selectedLineIdx: 0,
     font: 'px Impact',
-    lines: [{
-        txt: '',
-        size: 35,
-        align: 'center',
-        fillColor: '#2522E2',
-        strokeColor: '#100F0F',
-        // pos: { x: 0, y: 0, w: 2, h: 0 }
-    }]
+    lines: []
 }
 
 _loadMemes() // first load of dl data
@@ -69,15 +62,23 @@ function setgMeme(editedMeme) {
 }
 
 function addMemeLine() {
+    let pos = { x: 0, y: 0, w: 0, h: 0 }
+
+    if (gMeme.lines.length === 0) pos = { x: 10, y: gElCanvas.height / 6, w: 40, h: 40 } // 1st text initial spot
+    else if (gMeme.lines.length === 1) pos = { x: 10, y: gElCanvas.height / 1.1, w: 40, h: 40 } // 2nd text initial spot
+    else if (gMeme.lines.length >= 2) pos = { x: 10, y: gElCanvas.height / 2, w: 40, h: 40 } // 3rd (or more) text initial spot
+    
     gMeme.lines.push(
         {
             txt: '',
             size: 40,
             align: 'center',
             fillColor: '#2522E2',
-            strokeColor: '#100F0F'
+            strokeColor: '#100F0F',
+            pos: pos
         })
-    gMeme.selectedLineIdx = gMeme.lines.length - 1
+        
+    gMeme.selectedLineIdx = gMeme.lines.length - 1 // sets the focus for new text
 }
 
 function deleteLine() {
@@ -109,8 +110,8 @@ function changeFont(font) {
     gMeme.font = `px ${font}`
 }
 
-function saveMeme(url){
-    gDlImgs.push({id: makeId(), url: url})
+function saveMeme(url) {
+    gDlImgs.push({ id: makeId(), url: url })
     gDlMemes.push(gMeme)
 
     saveToStorage(IMG_STORAGE_KEY, gDlImgs)
@@ -124,17 +125,17 @@ function _loadMemes() {
     // If nothing in storage - creates an empty array
     if (!memes || !memes.length || !imgs || !imgs.length) {
         memes = []
-        imgs =[]
+        imgs = []
     }
 
     gDlMemes = memes
     gDlImgs = imgs
 }
 
-function getgDlImgs(){
+function getgDlImgs() {
     return gDlImgs
 }
 
-function getgDlMemes(){
+function getgDlMemes() {
     return gDlMemes
 }

@@ -33,16 +33,22 @@
         <div class="meme-editor-container flex space-between">
             <input id="meme-text-input" type="text" placeholder="type your meme here" oninput="onTyping(value)">
             <div class="first-section-btns">
-                <button onclick="onSwitchLine()"><img src="icons/up-and-down-opposite-double-arrows-side-by-side.png" alt=""></button>
+                <button onclick="onSwitchLine()"><img src="icons/up-and-down-opposite-double-arrows-side-by-side.png"
+                        alt=""></button>
                 <button onclick="onAddLine()"><img src="icons/add.png" alt=""></button>
                 <button onclick="onDeleteLine()"><img src="icons/trash.png" alt=""></button>
             </div>
             <div class="second-section-btns">
-                <button class="increase-btn" onclick="onChageFontSize('+')"><img src="icons/increase font - icon.png" alt=""></button>
-                <button class="decrease-btn" onclick="onChageFontSize('-')"><img src="icons/decrease font - icon.png" alt=""></button>
-                <button class="align-left-btn" onclick="onChageTxtSide('left')"><img src="icons/align-to-left.png" alt=""></button>
-                <button class="align-center-btn" onclick="onChageTxtSide('center')"><img src="icons/center-text-alignment.png" alt=""></button>
-                <button class="align-right-btn" onclick="onChageTxtSide('right')"><img src="icons/align-to-right.png" alt=""></button>
+                <button class="increase-btn" onclick="onChageFontSize('+')"><img src="icons/increase font - icon.png"
+                        alt=""></button>
+                <button class="decrease-btn" onclick="onChageFontSize('-')"><img src="icons/decrease font - icon.png"
+                        alt=""></button>
+                <button class="align-left-btn" onclick="onChageTxtSide('left')"><img src="icons/align-to-left.png"
+                        alt=""></button>
+                <button class="align-center-btn" onclick="onChageTxtSide('center')"><img
+                        src="icons/center-text-alignment.png" alt=""></button>
+                <button class="align-right-btn" onclick="onChageTxtSide('right')"><img src="icons/align-to-right.png"
+                        alt=""></button>
                 <select onchange="onChangeFont(this.value)">
                     <option value="cursive">Impact</option>
                     <option value="sans-serif">Arial</option>
@@ -61,8 +67,8 @@
                     <option value="Tahoma">Tahoma</option>
                     <option value="Lucida Sans Unicode">Lucida Sans Unicode</option>
                     <option value="Trebuchet MS">Trebuchet MS</option>
-                  </select>
-                  
+                </select>
+
                 <!-- <button><img src="icons/text stroke.png" alt="" type="color"></button>
                 <button><img src="icons/paint-board-and-brush.png" alt=""></button> -->
                 <input oninput="onChageColor(id, value)" type="color" id="fill-color">
@@ -79,8 +85,9 @@
     </main>
 
     <div class="gallery-page">
-        <section>
+        <section class="gallery-nav-bar">
             <input type="search">
+            <input type="file" class="file-input btn" name="image" onchange="onImgInput(event)" />
             <button onclick="onFlexibleSelect()">I'm flexible</button>
             <!-- TO ADD KEY WORDS -->
         </section>

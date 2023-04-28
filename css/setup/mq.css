@@ -16,11 +16,11 @@
 @media (max-width: 900px) {
     .main-nav-container {
         position: fixed;
+        z-index: 1;
         top: 0;
         right: 0;
         height: 100vh;
-        background-color: rgba(255, 255, 255, 0.9);
-
+        background-color: rgba(66, 134, 236, 0.9);
         min-width: 200px;
 
         transform: translateX(100%);
@@ -46,11 +46,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: row;
         padding: 0.7em;
     }
 
     .main-nav label:hover {
-        background-color: #e5e5e5;
+        background-color: #dbd9d9;
     }
 
     .main-screen {
@@ -75,7 +76,7 @@
 }
 
 /* SMALL */
-@media (min-width: 640px) {
+@media (min-width: 705px) {
     :root {
         --site-width: var(--s);
     }
@@ -97,13 +98,10 @@
     }
 
     .main-nav label:hover {
-        color: var(--clr2);
+        color: #8febeb;
         text-decoration: underline;
     }
 
-    .main-header {
-        height: 160px;
-    }
 }
 
 /* LARGE */

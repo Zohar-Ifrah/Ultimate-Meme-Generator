@@ -32,7 +32,7 @@ function renderGallery2() {
 
     var strHTML = ''
     strHTML += imgs.map((img) => `
-    <img src="${img.url}" onclick="onMemeSelect(this)" width="250" height="250" style="opacity: 1;">`
+    <img src="${img.url}" onclick="onMemeSelect(this)">`
     ).join('')
 
     document.querySelector('.memes-gallery-container').innerHTML = strHTML
@@ -42,72 +42,70 @@ function renderImg() {
     const imgs = getgImgs()
     const currMeme = getgMeme()
     const elImg = new Image()
+    const CurrLinesSelected = currMeme.lines[currMeme.selectedLineIdx]
+
     elImg.src = imgs[currMeme.selectedImgId - 1].url
-
     elImg.onload = () => { // redering:
-        gCtx.drawImage(elImg, 0, 0, gElCanvas.width, gElCanvas.height)
+        gCtx.drawImage(elImg, 0, 0, gElCanvas.width, gElCanvas.height) // draw Image
 
-        if (currMeme.lines.length > 0) { // if there are no lines
-            // let yyy
-            const coords = [
-                { x: 0, y: gElCanvas.height / 6 },
-                { x: 0, y: gElCanvas.height / 1.1 },
-                { x: 0, y: gElCanvas.height / 2 },]
+        if (currMeme.lines.length === 0) return // if there are no lines
 
-            currMeme.lines.forEach((line, idx) => {
+        currMeme.lines.forEach((line) => {
 
-                if (idx > 2) idx = 2 // for more then 3 texts - pos: mid
+            //setting coords according to the aling value
 
-                //setting coords according to the aling value
-                if (line.align === 'center') coords[idx].x = gElCanvas.width / 2
-                else if (line.align === 'right') coords[idx].x = gElCanvas.width
-                else if (line.align === 'left') coords[idx].x = 0
+            if (line.align === 'center') line.pos.x = gElCanvas.width / 2
+            else if (line.align === 'right') line.pos.x = gElCanvas.width - 10
+            else if (line.align === 'left') line.pos.x = 10
 
-                gCtx.strokeStyle = line.strokeColor
-                gCtx.fillStyle = line.fillColor
-                gCtx.font = line.size + currMeme.font
-                gCtx.textAlign = line.align
-                gCtx.textBaseline = 'middle'
+            gCtx.strokeStyle = line.strokeColor
+            gCtx.fillStyle = line.fillColor
+            gCtx.font = line.size + currMeme.font
+            gCtx.textAlign = line.align
+            gCtx.textBaseline = 'middle'
 
+            const words = line.txt.split(' ')
+            const lineHeight = line.size * 1.2
+            let lineText = ''
+            let y = line.pos.y
 
-                // if out of the canvas width split text
-                const words = line.txt.split(' ')
-                const lineHeight = line.size * 1.2
-                let lineText = ''
-                let y = coords[idx].y
-
-                words.forEach(word => {
-                    const textWidth = gCtx.measureText(lineText + word + ' ').width
-                    if (textWidth > gElCanvas.width) {
-                        gCtx.strokeText(lineText.trim(), coords[idx].x, y)
-                        gCtx.fillText(lineText.trim(), coords[idx].x, y)
-                        lineText = word + ' '
-                        y += lineHeight
-                    } else {
-                        lineText += word + ' '
-                    }
-                })
-                gCtx.strokeText(lineText.trim(), coords[idx].x, y)
-                gCtx.fillText(lineText.trim(), coords[idx].x, y)
-
-                // yyy = y 
+            words.forEach(word => {
+                const textWidth = gCtx.measureText(lineText + word + ' ').width
+                if (textWidth > gElCanvas.width) {
+                    gCtx.strokeText(lineText.trim(), line.pos.x, y)
+                    gCtx.fillText(lineText.trim(), line.pos.x, y)
+                    lineText = word + ' '
+                    y += lineHeight
+                } else {
+                    lineText += word + ' '
+                }
             })
-            // handeling HTML view for curr line selected
-            const memeLines = currMeme.lines[currMeme.selectedLineIdx]
-            handelHTML('meme-text-input', memeLines.txt)
-            handelHTML('fill-color', memeLines.fillColor)
-            handelHTML('stroke-color', memeLines.strokeColor)
 
-            // gCtx.strokeStyle = 'black'
-            // gCtx.lineWidth = 2
-            // memeLines.pos.x = coords[currMeme.selectedLineIdx].x - 25
-            // memeLines.pos.y = coords[currMeme.selectedLineIdx].y - 35
-            // memeLines.pos.w = memeLines.size + 2
-            // memeLines.pos.h = yyy - memeLines.pos.y
+            gCtx.strokeText(lineText.trim(), line.pos.x, y)
+            gCtx.fillText(lineText.trim(), line.pos.x, y)
 
-            // gCtx.strokeRect(memeLines.pos.x, memeLines.pos.y, memeLines.pos.w, memeLines.pos.h)
-
-        }
+            line.pos.h = y - line.pos.y + lineHeight
+            if (line.pos.h > lineHeight) {  // for 2 rows
+                line.pos.w = gElCanvas.width - 15
+                line.pos.x = 10
+            } else {
+                line.pos.w = gCtx.measureText(line.txt).width
+                if (line.align === 'center') line.pos.x -= gCtx.measureText(line.txt).width / 2
+                else if (line.align === 'right') line.pos.x -= gCtx.measureText(line.txt).width
+            }
+        })
+        // handeling HTML view for curr line selected
+        handelHTML('meme-text-input', CurrLinesSelected.txt)
+        handelHTML('fill-color', CurrLinesSelected.fillColor)
+        handelHTML('stroke-color', CurrLinesSelected.strokeColor)
+        if (gCtx.measureText(CurrLinesSelected.txt).width === 0) return // if there is no txt 
+        gCtx.strokeStyle = 'black'
+        gCtx.lineWidth = 2
+        gCtx.strokeRect(
+            CurrLinesSelected.pos.x - 10,
+            CurrLinesSelected.pos.y - CurrLinesSelected.size + 10,
+            CurrLinesSelected.pos.w + 10,
+            CurrLinesSelected.pos.h + 10)
     }
 }
 
@@ -200,11 +198,14 @@ function handelHTML(toHandel, val) { // toHandel: class name (str), val: value t
         const currMeme = getgMeme()
         if (currMeme.lines.length === 0) { // if empty
             elCurrDoc.disabled = true
-            elCurrDoc.placeholder = 'please add a line'
+            elCurrDoc.placeholder = 'to edit meme please add a line (plus button)'
             handelBtns(true)
+            // elCurrDoc.placeholder.style.color ='red'
         }
         else {
             elCurrDoc.disabled = false
+            // document.getElementById(toHandel).placeholder.style.color ='black'
+
             elCurrDoc.placeholder = 'type your meme here'
             handelBtns(false)
         }
@@ -286,8 +287,6 @@ function onSavingMeme() {
 function onToggleMenu() {
     document.body.classList.toggle('menu-open');
 }
-
-
 
 
 
