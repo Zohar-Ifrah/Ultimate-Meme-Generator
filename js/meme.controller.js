@@ -1,38 +1,43 @@
+const TOUCH_EVS = ['touchstart', 'touchmove', 'touchend']
+
 var gElCanvas
 var gCtx
 var gCurrPage = 'Gallery'
 var gSwitchDir = '-'
+var isDownload = false
 
 function onInit() {
     gElCanvas = document.getElementById('canvas')
     gCtx = gElCanvas.getContext('2d')
     renderGallery()
-    renderGallery2()
-    // resizeCanvas()
+    renderMyMemes()
 
-    //temp:
-    // addMemeLine()
-    // renderImg()
+    // addListeners()
 }
 
-// render the gallery imgs from service gImgs 
-function renderGallery() {
-    const imgs = getgImgs()
 
+// render the gallery imgs from service gImgs 
+function renderGallery(filter = null) {
+    const imgs = getgImgs()
+    let filteredImgs = imgs
+
+    if (filter !== null) {
+        filteredImgs = filterKeys(imgs, filter)
+    }
     var strHTML = ''
-    strHTML += imgs.map((img) => `
+    strHTML += filteredImgs.map((img) => `
     <img src="${img.url}" alt="" onclick="onImgSelect(this)">`
     ).join('')
 
     document.querySelector('.imgs-gallery-container').innerHTML = strHTML
 }
 
-function renderGallery2() {
-    const imgs = getgDlImgs()
+function renderMyMemes() {
+    const imgs = getgSavedImgs()
 
     var strHTML = ''
     strHTML += imgs.map((img) => `
-    <img src="${img.url}" onclick="onMemeSelect(this)">`
+    <img src="${img.url}" onclick="onMyMemeSelect(this)">`
     ).join('')
 
     document.querySelector('.memes-gallery-container').innerHTML = strHTML
@@ -45,6 +50,7 @@ function renderImg() {
     const CurrLinesSelected = currMeme.lines[currMeme.selectedLineIdx]
 
     elImg.src = imgs[currMeme.selectedImgId - 1].url
+    // if (!img) elImg.src =img
     elImg.onload = () => { // redering:
         gCtx.drawImage(elImg, 0, 0, gElCanvas.width, gElCanvas.height) // draw Image
 
@@ -98,7 +104,7 @@ function renderImg() {
         handelHTML('meme-text-input', CurrLinesSelected.txt)
         handelHTML('fill-color', CurrLinesSelected.fillColor)
         handelHTML('stroke-color', CurrLinesSelected.strokeColor)
-        if (gCtx.measureText(CurrLinesSelected.txt).width === 0) return // if there is no txt 
+        if (gCtx.measureText(CurrLinesSelected.txt).width === 0 || isDownload) return // if there is no txt 
         gCtx.strokeStyle = 'black'
         gCtx.lineWidth = 2
         gCtx.strokeRect(
@@ -132,6 +138,20 @@ function onImgSelect(img) {  // gets: this (element)
 
     setgMeme(currMeme)
     renderImg()
+    togglePages('Editor')
+}
+
+function onMyMemeSelect(img) {
+    resetLines()
+
+    const imgs = getgSavedImgs()
+    const memes = getgSavedMemes()
+
+    const imgIdx = imgs.findIndex(memeImg => memeImg.url === img.getAttribute('src')) //get img IDX
+    const memeIdx = memes.findIndex(meme => meme.selectedImgId === imgs[imgIdx].id)
+
+    setgMeme(memes[memeIdx])
+    // renderImg(true)    // to fix and adjust
     togglePages('Editor')
 }
 
@@ -182,7 +202,7 @@ function onChageColor(colorType, val) { // id (color: fill/stroke), value (color
 
 // Switching between pages using gCurrPage (only toggle display none)
 function togglePages(pageStr) {// gets: 'Gallery', 'Meme', 'About
-    if (pageStr === gCurrPage) return // if same page clicked
+    if (pageStr === gCurrPage.toLowerCase()) return // if same page clicked
 
     document.querySelector('.' + gCurrPage.toLowerCase() + '-page').classList.add('hide')
     gCurrPage = pageStr
@@ -272,9 +292,13 @@ function handelBtns(isDisable) {
 }
 
 // download img to user's pc
-function downloadImg(elLink) {
+function downloadImg(elLink) { //to fix: (avoid rekt before save)
+    isDownload = true
+    renderImg()
+
     const imgContent = gElCanvas.toDataURL('image/jpeg') // image/jpeg the default format
     elLink.href = imgContent
+    isDownload = false
 }
 
 // saving meme details and img in services
@@ -282,16 +306,114 @@ function downloadImg(elLink) {
 function onSavingMeme() {
     const imgContent = gElCanvas.toDataURL('image/jpeg')
     doUploadImg(imgContent, url => saveMeme(url))
+    renderMyMemes()
 }
 
 function onToggleMenu() {
     document.body.classList.toggle('menu-open');
 }
 
+function onImgInput() {
+    resetLines()
+    addMemeLine()
+
+    const imgs = getgImgs()
+    const currMeme = getgMeme()
+    const imgIdx = imgs.findIndex(memeImg => memeImg.url === img.getAttribute('src'))
+
+    currMeme.selectedImgId = imgIdx + 1
+
+    setgMeme(currMeme)
+    renderImg()
+    togglePages('Editor')
+}
+
+function onSearchInput(elSearch) {
+    const keyWord = elSearch.value
+    // const keyWords = getgKeywordSearchCountMap() //to add value
+    renderGallery(keyWord)
+}
+
+function filterKeys(imgs, filter) {
+    let filteredImgs = []
+    filteredImgs = imgs.filter(img =>
+        img.keywords.some(keyword => keyword.includes(filter)))
+    console.log(filteredImgs)
+    console.log(imgs)
+
+    return filteredImgs
+}
+
+function addListeners() {
+    addMouseListeners()
+    addTouchListeners()
+
+}
+
+function addMouseListeners() {
+    gElCanvas.addEventListener('mousedown', onDown)
+    gElCanvas.addEventListener('mousemove', onMove)
+    gElCanvas.addEventListener('mouseup', onUp)
+}
+
+function addTouchListeners() {
+    gElCanvas.addEventListener('touchstart', onDown)
+    gElCanvas.addEventListener('touchmove', onMove)
+    gElCanvas.addEventListener('touchend', onUp)
+}
+
+function onDown(ev) {
+    const pos = getEvPos(ev)
+    console.log('pos:', pos)
+}
+
+function onMove(ev) {
+    console.log('Move')
+}
+
+function onUp() {
+    console.log('Up')
+    // document.body.style.cursor = 'grab'
+}
+
+function getEvPos(ev) {
+    let pos = {
+        x: ev.offsetX,
+        y: ev.offsetY,
+    }
+    // console.log('pos:', pos)
+    // Check if its a touch ev
+    if (TOUCH_EVS.includes(ev.type)) {
+        //soo we will not trigger the mouse ev
+        ev.preventDefault()
+        //Gets the first touch point
+        ev = ev.changedTouches[0]
+        //Calc the right pos according to the touch screen
+        pos = {
+            x: ev.pageX - ev.target.offsetLeft - ev.target.clientLeft,
+            y: ev.pageY - ev.target.offsetTop - ev.target.clientTop,
+        }
+    }
+}
+
+function updatePos(x, y) {
+    console.log(x)
+    console.log(y)
+    const currMeme = getgMeme()
+    const lines = currMeme.lines
+    const pos = { x, y }
+
+    lines.align = 'drag'
+    lines.pos = pos
+    console.log(currMeme)
+    setgMeme(currMeme)
+}
+
+// to fix:
+// choose file btn
+// avoid rekt before save
+
+// memes on storage
+// on save: to render imgs after save
 
 
-// function resizeCanvas() {
-//     const elContainer = document.querySelector('.canvas-container')
-//     gElCanvas.width = elContainer.offsetWidth
-//     gElCanvas.height = elContainer.offsetHeight
-// }

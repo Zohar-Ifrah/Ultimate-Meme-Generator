@@ -17,8 +17,16 @@
     .logo {
         font-size: 1em;
     }
-    
-    
+
+    .main-header {
+        padding: 2em;
+    }
+
+    .meme-editor-container {
+        margin-block-start: 15px;
+    }
+
+
     .main-nav-container {
         position: fixed;
         z-index: 1;
@@ -85,8 +93,17 @@
     :root {
         --site-width: var(--s);
     }
+
     .logo {
         font-size: 1.7em;
+    }
+
+    .main-header {
+        padding: 1.7em;
+    }
+
+    .meme-editor-container {
+        margin-block-start: 2px;
     }
 }
 
@@ -109,8 +126,13 @@
         color: #8febeb;
         text-decoration: underline;
     }
+
     .logo {
         font-size: 1.7em;
+    }
+
+    .main-header {
+        padding: 1.7em;
     }
 
 }

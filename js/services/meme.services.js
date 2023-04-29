@@ -3,8 +3,8 @@ const MEME_STORAGE_KEY = 'memesDB'
 const IMG_STORAGE_KEY = 'imgDB'
 const SORT_KEY = 'sortBy'
 
-var gDlMemes = []
-var gDlImgs = []
+var gSavedMemes = []
+var gSavedImgs = []
 var gKeywordSearchCountMap = { 'funny': 12, 'cat': 16, 'baby': 2, 'evil': 3, 'cute': 7, 'old': 4, 'movie': 5 }
 
 var gImgs = [
@@ -67,7 +67,7 @@ function addMemeLine() {
     if (gMeme.lines.length === 0) pos = { x: 10, y: gElCanvas.height / 6, w: 40, h: 40 } // 1st text initial spot
     else if (gMeme.lines.length === 1) pos = { x: 10, y: gElCanvas.height / 1.1, w: 40, h: 40 } // 2nd text initial spot
     else if (gMeme.lines.length >= 2) pos = { x: 10, y: gElCanvas.height / 2, w: 40, h: 40 } // 3rd (or more) text initial spot
-    
+
     gMeme.lines.push(
         {
             txt: '',
@@ -77,7 +77,7 @@ function addMemeLine() {
             strokeColor: '#100F0F',
             pos: pos
         })
-        
+
     gMeme.selectedLineIdx = gMeme.lines.length - 1 // sets the focus for new text
 }
 
@@ -111,11 +111,14 @@ function changeFont(font) {
 }
 
 function saveMeme(url) {
-    gDlImgs.push({ id: makeId(), url: url })
-    gDlMemes.push(gMeme)
+    const id = makeId()
+    gMeme.selectedImgId = id
 
-    saveToStorage(IMG_STORAGE_KEY, gDlImgs)
-    saveToStorage(MEME_STORAGE_KEY, gDlMemes)
+    gSavedImgs.push({ id, url })
+    gSavedMemes.push(gMeme)
+
+    saveToStorage(IMG_STORAGE_KEY, gSavedImgs)
+    saveToStorage(MEME_STORAGE_KEY, gSavedMemes)
 }
 
 function _loadMemes() {
@@ -128,14 +131,30 @@ function _loadMemes() {
         imgs = []
     }
 
-    gDlMemes = memes
-    gDlImgs = imgs
+    gSavedMemes = memes
+    gSavedImgs = imgs
 }
 
-function getgDlImgs() {
-    return gDlImgs
+function getgSavedImgs() {
+    return gSavedImgs
 }
 
-function getgDlMemes() {
-    return gDlMemes
+function setgSavedImgs(savedImgs) {
+    gSavedImgs = savedImgs
+}
+
+function getgSavedMemes() {
+    return gSavedMemes
+}
+
+function setgSavedMemes(savedMemes) {
+    gSavedMemes = savedMemes
+}
+
+function getgKeywordSearchCountMap() {
+    return gKeywordSearchCountMap
+}
+
+function setgKeywordSearchCountMap() {
+    return gKeywordSearchCountMap
 }

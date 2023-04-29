@@ -6,7 +6,6 @@ body {
     margin: 0;
     background-color: #22252C;
     font-family: cursive;
-    /* color: var(--clr1); */
 }
 
 .editor-page {
@@ -100,3 +99,24 @@ button {
 .gallery-nav-bar{
     margin-block-end: 10px;
 }
+
+.about-page{
+    text-align: center;
+    color: var(--clr1);
+}
+.meme-page{
+    text-align: center;
+    color: var(--clr1);
+}
+
+/* ot fix:
+placeholder color
+btns color & size
+dl btn
+txt color (about + meme pages)
+choose file btn
+1 pic on flter (big!)
+
+mob:
+padding main-header +++
+btns --- */

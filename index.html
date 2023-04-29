@@ -16,9 +16,9 @@
         <div class="logo">Meme-Generator</div>
         <nav class="main-nav-container flex">
             <div class="main-nav">
-                <label onclick="togglePages(innerText)">Gallery</label>
-                <label onclick="togglePages(innerText)">Meme</label>
-                <label onclick="togglePages(innerText)">About</label>
+                <label data-page="Gallery" onclick="togglePages(this.dataset.page)">Gallery</label>
+                <label data-page="Meme" onclick="togglePages(this.dataset.page)">My Memes</label>
+                <label data-page="About" onclick="togglePages(this.dataset.page)">About</label>
             </div>
         </nav>
         <button class="btn-menu" onclick="onToggleMenu()">☰</button>
@@ -74,7 +74,6 @@
                 <input oninput="onChageColor(id, value)" type="color" id="fill-color">
                 <input oninput="onChageColor(id, value)" type="color" id="stroke-color">
             </div>
-            <!-- <input type="file" class="file-input btn" name="image" onchange="onImgInput(event)" /> -->
 
             <!-- To add Slide Bar -->
             <button class="btn" onclick="onSavingMeme()">Save</button>
@@ -86,11 +85,12 @@
 
     <div class="gallery-page">
         <section class="gallery-nav-bar">
-            <input type="search">
-            <input type="file" class="file-input btn" name="image" onchange="onImgInput(event)" />
+            <input type="search" class="search-input" name="search" oninput="onSearchInput(this)"/>
+            <!-- <input type="file" class="file-input btn" name="image" onchange="onImgInput(event)" /> -->
             <button onclick="onFlexibleSelect()">I'm flexible</button>
             <!-- TO ADD KEY WORDS -->
         </section>
+
         <main class="imgs-gallery-container"></main>
     </div>
 
@@ -102,7 +102,14 @@
     <div class="about-page hide">
         <h1>Meme Generator</h1>
         <h2>Created by Zohar Ifrah</h2>
-        <p>to edit</p>
+        <p>If you enjoy this app, here some of my other projects:
+            <br>
+            <a href="https://zohar-ifrah.github.io/Proj-Mine_Sweeper/">Mine-Sweeper</a>
+            <br>
+            <a href="https://zohar-ifrah.github.io/Proj-ball_board/">Ball-Board</a>
+            <br>
+            <a href="https://zohar-ifrah.github.io/proj-touch_nums/">Touch-Nums</a>
+        </p>
     </div>
 
     <script src="js/services/util.services.js"></script>
