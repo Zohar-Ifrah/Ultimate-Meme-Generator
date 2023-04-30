@@ -10,6 +10,11 @@
         padding: 10px;
         height: 400px;
     }
+
+    .editor-page{
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 /* UNTIL MEDIUM */
@@ -64,7 +69,7 @@
     }
 
     .main-nav label:hover {
-        background-color: #dbd9d9;
+        background-color: #5588cd;
     }
 
     .main-screen {
@@ -99,7 +104,9 @@
     }
 
     .main-header {
-        padding: 1.7em;
+        padding: 2em;
+        width: 80%;
+        margin: 30px auto;
     }
 
     .meme-editor-container {
@@ -132,7 +139,13 @@
     }
 
     .main-header {
-        padding: 1.7em;
+        padding: 2em;
+        width: 80%;
+        margin: 30px auto;
+    }
+    .editor-page{
+        width: 90%;
+        margin: 30px auto;
     }
 
 }

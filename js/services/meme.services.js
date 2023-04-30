@@ -50,7 +50,7 @@ function getgImgs() {
 }
 
 function setgImgs() {
-    console.log('edit me')
+    console.log('if need edit me')
 }
 
 function getgMeme() {
@@ -72,10 +72,11 @@ function addMemeLine() {
         {
             txt: '',
             size: 40,
-            align: 'center',
+            align: 'left',
             fillColor: '#2522E2',
             strokeColor: '#100F0F',
-            pos: pos
+            pos: pos,
+            rectArea: {}
         })
 
     gMeme.selectedLineIdx = gMeme.lines.length - 1 // sets the focus for new text
@@ -112,10 +113,11 @@ function changeFont(font) {
 
 function saveMeme(url) {
     const id = makeId()
-    gMeme.selectedImgId = id
+    const meme = { ...gMeme }
+    meme.selectedImgId = id
 
     gSavedImgs.push({ id, url })
-    gSavedMemes.push(gMeme)
+    gSavedMemes.push(meme)
 
     saveToStorage(IMG_STORAGE_KEY, gSavedImgs)
     saveToStorage(MEME_STORAGE_KEY, gSavedMemes)

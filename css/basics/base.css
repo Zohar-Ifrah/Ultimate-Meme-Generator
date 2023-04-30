@@ -24,6 +24,8 @@ body {
     border-radius: 25px;
     padding: 10px;
     margin-inline: 10px;
+    box-shadow: -1px 1px 20px #1fc5c5de;
+
 }
 
 .first-section-btns {
@@ -69,14 +71,25 @@ body {
 
 #canvas {
     border: 1px solid rgb(30, 22, 144);
-    box-shadow: -1px 1px 20px rgba(102, 101, 101, 0.6);
+    box-shadow: -1px 1px 20px #1fc5c5de;
     margin-inline-start: 12px;
 }
 
 
 img {
     width: 100%;
+    cursor: pointer;
 }
+
+.input-color {
+    width: 3em;
+    height: 3em;
+}
+
+.main-nav label:hover{
+    cursor: pointer;
+}
+
 
 input {
     border-radius: 25px;
@@ -86,25 +99,45 @@ input {
 }
 
 button {
-    background-color: #19A59F;
+    color: aliceblue;
+    background-color: var(--clr1);
     border-radius: 25px;
     padding: 20px;
     margin: 3px;
+}
+
+button:hover {
+    cursor: pointer;
+    outline: auto;
+}
+
+.dl-btn {
+    color: aliceblue;
+    background-color: var(--clr1);
+    border-radius: 25px;
+    padding: 20px;
+    margin: 3px;
+    text-decoration: none;
+}
+
+.dl-btn:hover {
+    outline: auto;
 }
 
 #meme-text-input::placeholder {
     /* color: rgb(230, 35, 35); */
 }
 
-.gallery-nav-bar{
+.gallery-nav-bar {
     margin-block-end: 10px;
 }
 
-.about-page{
+.about-page {
     text-align: center;
     color: var(--clr1);
 }
-.meme-page{
+
+.meme-page {
     text-align: center;
     color: var(--clr1);
 }

@@ -1,4 +1,6 @@
 const TOUCH_EVS = ['touchstart', 'touchmove', 'touchend']
+let gIsDraged = false
+let gStartPos
 
 var gElCanvas
 var gCtx
@@ -9,10 +11,10 @@ var isDownload = false
 function onInit() {
     gElCanvas = document.getElementById('canvas')
     gCtx = gElCanvas.getContext('2d')
+
     renderGallery()
     renderMyMemes()
-
-    // addListeners()
+    addListeners()
 }
 
 
@@ -37,7 +39,7 @@ function renderMyMemes() {
 
     var strHTML = ''
     strHTML += imgs.map((img) => `
-    <img src="${img.url}" onclick="onMyMemeSelect(this)">`
+    <img src="${img.url}" alt="Click to open" onclick="onMyMemeSelect(this)">`
     ).join('')
 
     document.querySelector('.memes-gallery-container').innerHTML = strHTML
@@ -99,19 +101,36 @@ function renderImg() {
                 if (line.align === 'center') line.pos.x -= gCtx.measureText(line.txt).width / 2
                 else if (line.align === 'right') line.pos.x -= gCtx.measureText(line.txt).width
             }
+
         })
         // handeling HTML view for curr line selected
         handelHTML('meme-text-input', CurrLinesSelected.txt)
         handelHTML('fill-color', CurrLinesSelected.fillColor)
         handelHTML('stroke-color', CurrLinesSelected.strokeColor)
+
+        // rect drawing:
         if (gCtx.measureText(CurrLinesSelected.txt).width === 0 || isDownload) return // if there is no txt 
         gCtx.strokeStyle = 'black'
         gCtx.lineWidth = 2
+
+        let masure = 6
+        if (CurrLinesSelected.align === 'drag-center') masure = gCtx.measureText(CurrLinesSelected.txt).width / 2
+        else if (CurrLinesSelected.align === 'drag-right') masure = gCtx.measureText(CurrLinesSelected.txt).width
+        else if (CurrLinesSelected.align === 'drag-left') masure = 6
+
         gCtx.strokeRect(
-            CurrLinesSelected.pos.x - 10,
-            CurrLinesSelected.pos.y - CurrLinesSelected.size + 10,
+            CurrLinesSelected.pos.x - masure,
+            CurrLinesSelected.pos.y - CurrLinesSelected.size / 1.3,
             CurrLinesSelected.pos.w + 10,
             CurrLinesSelected.pos.h + 10)
+
+        //saving rect area
+        const rectStartX = CurrLinesSelected.pos.x - 10
+        const rectStartY = CurrLinesSelected.pos.y - CurrLinesSelected.size + 10
+        const rectEndX = CurrLinesSelected.pos.x - 10 + CurrLinesSelected.pos.w + 10
+        const rectEndY = CurrLinesSelected.pos.y - CurrLinesSelected.size + 10 + CurrLinesSelected.pos.h + 10
+
+        CurrLinesSelected.rectArea = { xStart: rectStartX, yStart: rectStartY, xEnd: rectEndX, yEnd: rectEndY }
     }
 }
 
@@ -142,17 +161,18 @@ function onImgSelect(img) {  // gets: this (element)
 }
 
 function onMyMemeSelect(img) {
-    resetLines()
+    // resetLines()
 
-    const imgs = getgSavedImgs()
-    const memes = getgSavedMemes()
+    // const imgs = getgSavedImgs()
+    // const memes = getgSavedMemes()
 
-    const imgIdx = imgs.findIndex(memeImg => memeImg.url === img.getAttribute('src')) //get img IDX
-    const memeIdx = memes.findIndex(meme => meme.selectedImgId === imgs[imgIdx].id)
+    // const imgIdx = imgs.findIndex(memeImg => memeImg.url === img.getAttribute('src')) //get img IDX
+    // const memeIdx = memes.findIndex(meme => meme.selectedImgId === imgs[imgIdx].id)
 
-    setgMeme(memes[memeIdx])
+    // setgMeme(memes[memeIdx])
     // renderImg(true)    // to fix and adjust
-    togglePages('Editor')
+    onFlexibleSelect() // until fixed
+    // togglePages('Editor')
 }
 
 // add a default line from services
@@ -292,7 +312,7 @@ function handelBtns(isDisable) {
 }
 
 // download img to user's pc
-function downloadImg(elLink) { //to fix: (avoid rekt before save)
+function downloadImg(elLink) { //to fix: (avoid rekt before dl)
     isDownload = true
     renderImg()
 
@@ -306,11 +326,11 @@ function downloadImg(elLink) { //to fix: (avoid rekt before save)
 function onSavingMeme() {
     const imgContent = gElCanvas.toDataURL('image/jpeg')
     doUploadImg(imgContent, url => saveMeme(url))
-    renderMyMemes()
+    // renderMyMemes()
 }
 
 function onToggleMenu() {
-    document.body.classList.toggle('menu-open');
+    document.body.classList.toggle('menu-open')
 }
 
 function onImgInput() {
@@ -338,9 +358,6 @@ function filterKeys(imgs, filter) {
     let filteredImgs = []
     filteredImgs = imgs.filter(img =>
         img.keywords.some(keyword => keyword.includes(filter)))
-    console.log(filteredImgs)
-    console.log(imgs)
-
     return filteredImgs
 }
 
@@ -363,28 +380,65 @@ function addTouchListeners() {
 }
 
 function onDown(ev) {
-    const pos = getEvPos(ev)
-    console.log('pos:', pos)
+    const pos = getEvPos(ev)  //gets pos pressed on
+    const currMeme = getgMeme()
+    const rectArea = currMeme.lines[currMeme.selectedLineIdx].rectArea
+
+    //if inside the rect
+    if (pos.x >= rectArea.xStart && pos.x <= rectArea.xEnd
+        && pos.y >= rectArea.yStart && pos.y <= rectArea.yEnd) {
+        gIsDraged = true
+        gStartPos = pos
+    }
 }
 
 function onMove(ev) {
-    console.log('Move')
+    const pos = getEvPos(ev) // gets the spot pressing on (every sec)
+    const currMeme = getgMeme()
+    const rectArea = currMeme.lines[currMeme.selectedLineIdx].rectArea
+    if (pos.x >= rectArea.xStart && pos.x <= rectArea.xEnd
+        && pos.y >= rectArea.yStart && pos.y <= rectArea.yEnd) {
+        document.body.style.cursor = 'grab'
+    } else document.body.style.cursor = 'default'
+
+    if (!gIsDraged) return
+
+    document.body.style.cursor = 'grabbing'
+    // const currMeme = getgMeme()
+    const currLine = currMeme.lines[currMeme.selectedLineIdx]
+    // const pos = getEvPos(ev) // gets the spot pressing on (every sec)
+
+    // Calc the delta, the diff moved
+    const dx = pos.x - gStartPos.x
+    const dy = pos.y - gStartPos.y
+
+    currLine.pos.x += dx
+    currLine.pos.y += dy
+
+    if (currLine.align === 'center') currLine.align = 'drag-center'
+    if (currLine.align === 'right') currLine.align = 'drag-right'
+    if (currLine.align === 'left') currLine.align = 'drag-left'
+    // currLine.align = 'drag'
+    gStartPos = pos // update last pos
+    setgMeme(currMeme)
+    renderImg()
 }
 
 function onUp() {
-    console.log('Up')
-    // document.body.style.cursor = 'grab'
+    gIsDraged = false
+    document.body.style.cursor = 'default'
 }
 
 function getEvPos(ev) {
+    // Gets the offset pos , the default pos
     let pos = {
         x: ev.offsetX,
         y: ev.offsetY,
     }
-    // console.log('pos:', pos)
+
     // Check if its a touch ev
     if (TOUCH_EVS.includes(ev.type)) {
-        //soo we will not trigger the mouse ev
+
         ev.preventDefault()
         //Gets the first touch point
         ev = ev.changedTouches[0]
@@ -394,19 +448,7 @@ function getEvPos(ev) {
             y: ev.pageY - ev.target.offsetTop - ev.target.clientTop,
         }
     }
-}
-
-function updatePos(x, y) {
-    console.log(x)
-    console.log(y)
-    const currMeme = getgMeme()
-    const lines = currMeme.lines
-    const pos = { x, y }
-
-    lines.align = 'drag'
-    lines.pos = pos
-    console.log(currMeme)
-    setgMeme(currMeme)
+    return pos
 }
 
 // to fix:

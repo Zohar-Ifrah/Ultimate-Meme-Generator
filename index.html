@@ -71,21 +71,21 @@
 
                 <!-- <button><img src="icons/text stroke.png" alt="" type="color"></button>
                 <button><img src="icons/paint-board-and-brush.png" alt=""></button> -->
-                <input oninput="onChageColor(id, value)" type="color" id="fill-color">
-                <input oninput="onChageColor(id, value)" type="color" id="stroke-color">
+                <input class="input-color" oninput="onChageColor(id, value)" type="color" id="fill-color">
+                <input class="input-color" oninput="onChageColor(id, value)" type="color" id="stroke-color">
             </div>
 
             <!-- To add Slide Bar -->
             <button class="btn" onclick="onSavingMeme()">Save</button>
             <button class="btn" onclick="onUploadImg()">Share</button>
-            <a href="#" class="btn" onclick="downloadImg(this)" download="my-meme.jpg">Download</a>
+            <a href="#" class="dl-btn btn" onclick="downloadImg(this)" download="my-meme.jpg">Download</a>
         </div>
 
     </main>
 
     <div class="gallery-page">
         <section class="gallery-nav-bar">
-            <input type="search" class="search-input" name="search" oninput="onSearchInput(this)"/>
+            <input type="search" class="search-input" name="search" oninput="onSearchInput(this)" placeholder="search by category"/>
             <!-- <input type="file" class="file-input btn" name="image" onchange="onImgInput(event)" /> -->
             <button onclick="onFlexibleSelect()">I'm flexible</button>
             <!-- TO ADD KEY WORDS -->
@@ -102,7 +102,7 @@
     <div class="about-page hide">
         <h1>Meme Generator</h1>
         <h2>Created by Zohar Ifrah</h2>
-        <p>If you enjoy this app, here some of my other projects:
+        <p>If you enjoy this app, try some of my other projects:
             <br>
             <a href="https://zohar-ifrah.github.io/Proj-Mine_Sweeper/">Mine-Sweeper</a>
             <br>
