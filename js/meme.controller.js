@@ -326,7 +326,8 @@ function downloadImg(elLink) { //to fix: (avoid rekt before dl)
 function onSavingMeme() {
     const imgContent = gElCanvas.toDataURL('image/jpeg')
     doUploadImg(imgContent, url => saveMeme(url))
-    // renderMyMemes()
+    renderMyMemes()
+    renderMyMemes()
 }
 
 function onToggleMenu() {
