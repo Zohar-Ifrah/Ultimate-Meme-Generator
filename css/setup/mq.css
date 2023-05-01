@@ -1,0 +1,136 @@
+/* JUST MOBILE */
+@media (max-width: 640px) {
+    .editor-page {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meme-editor-continer {
+        padding: 10px;
+        height: 400px;
+    }
+}
+
+/* UNTIL MEDIUM */
+@media (max-width: 900px) {
+    .logo {
+        font-size: 1em;
+    }
+
+    .main-header {
+        padding: 2em;
+    }
+
+    .meme-editor-container {
+        margin-block-start: 15px;
+    }
+
+
+    .main-nav-container {
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        background-color: rgba(66, 134, 236, 0.9);
+        min-width: 200px;
+
+        transform: translateX(100%);
+
+        transition: transform 0.6s, box-shadow 0.6s;
+    }
+
+    body.menu-open .main-nav-container {
+        transform: translateX(0);
+        box-shadow: -1px 1px 20px rgb(0 0 0 / 50%);
+    }
+
+    .main-nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .main-nav>label {
+        border-bottom: 1px solid #ccc;
+    }
+
+    .main-nav label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+        padding: 0.7em;
+    }
+
+    .main-nav label:hover {
+        background-color: #5588cd;
+    }
+
+    .main-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+
+        pointer-events: none;
+        opacity: 0;
+
+        transition: opacity 0.6s;
+    }
+
+    body.menu-open .main-screen {
+        pointer-events: auto;
+        opacity: 1;
+    }
+}
+
+/* SMALL */
+@media (min-width: 705px) {
+    .logo {
+        font-size: 1.7em;
+    }
+
+    .main-header {
+        padding: 2em;
+        width: 80%;
+        margin: 30px auto;
+    }
+
+    .meme-editor-container {
+        margin-block-start: 2px;
+    }
+}
+
+/* MEDIUM */
+@media (min-width: 900px) {
+    .btn-menu {
+        display: none;
+    }
+
+    .main-nav>label:not(:last-child) {
+        margin-inline-end: 100px;
+    }
+
+    .main-nav label:hover {
+        color: #8febeb;
+        text-decoration: underline;
+    }
+
+    .logo {
+        font-size: 1.7em;
+    }
+
+    .main-header {
+        padding: 2em;
+        width: 80%;
+        margin: 30px auto;
+    }
+
+    .editor-page {
+        width: 90%;
+        margin: 30px auto;
+    }
+}

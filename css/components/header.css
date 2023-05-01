@@ -1,0 +1,17 @@
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-image: linear-gradient(86deg, var(--clr2) 0%, var(--clr1) 100%);
+    height: 5em;
+    border-radius: 45px;
+    margin-block-start: 14px;
+    margin-block-end: 10px;
+}
+
+.main-nav label {
+    color: inherit;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: aliceblue;
+}
