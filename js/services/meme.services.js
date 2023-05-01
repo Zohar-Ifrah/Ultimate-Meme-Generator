@@ -1,10 +1,7 @@
 
 const MEME_STORAGE_KEY = 'memesDB'
-const IMG_STORAGE_KEY = 'imgDB'
-const SORT_KEY = 'sortBy'
 
-var gSavedMemes = []
-var gSavedImgs = []
+var gMyMemes = []
 var gKeywordSearchCountMap = { 'funny': 12, 'cat': 16, 'baby': 2, 'evil': 3, 'cute': 7, 'old': 4, 'movie': 5 }
 
 var gImgs = [
@@ -28,8 +25,10 @@ var gImgs = [
     { id: 18, url: 'meme-imgs/18.jpg', keywords: ['movie'] },
 ]
 
+// texts with 1 line for flex meme 
 var gTxtsOneLine = ['MEOW', 'i\'m not tired', 'i\'ll do my best']
 
+// texts with 2 lines for flex meme 
 var gTxtsTwoLines = [
     ['you can\'t get fired', 'if you don\'t have a job'],
     ['him: calm down', 'me: I\'m calm down'],
@@ -42,25 +41,23 @@ var gMeme = {
     font: 'px Impact',
     lines: []
 }
+// first load of dl data, if none creates empty array
+_loadMemes()
 
-_loadMemes() // first load of dl data
-
-function getgImgs() {
+function getImgs() {
     return gImgs
 }
 
-function setgImgs() {
-    console.log('if need edit me')
-}
-
-function getgMeme() {
+function getMeme() {
     return gMeme
 }
 
-function setgMeme(editedMeme) {
-    gMeme = editedMeme
+function setMeme(meme) {
+    gMeme = meme
 }
 
+// add a line and set defualt: size, align, colors, and pos
+// set text position on - 1st: top, 2nd: bot, 3rd: mid. 4th and rest on mid
 function addMemeLine() {
     let pos = { x: 0, y: 0, w: 0, h: 0 }
 
@@ -82,6 +79,8 @@ function addMemeLine() {
     gMeme.selectedLineIdx = gMeme.lines.length - 1 // sets the focus for new text
 }
 
+// delete the selected line focused on curr meme
+// if its the last line (no more lines) selectedLineIdx = -1
 function deleteLine() {
     gMeme.lines.splice(gMeme.selectedLineIdx, 1)
     if (gMeme.lines.length !== 0) { // if not empty
@@ -91,18 +90,22 @@ function deleteLine() {
     else gMeme.selectedLineIdx = -1 // empty
 }
 
+// resets gMeme lines for a new meme
 function resetLines() {
     gMeme.lines = []
 }
 
-function getgTxtsOneLine() {
+// return texts with 1 line for flex meme 
+function getTxtsOneLine() {
     return gTxtsOneLine
 }
 
-function getgTxtsTwoLines() {
+// return texts with 2 lines for flex meme 
+function getTxtsTwoLines() {
     return gTxtsTwoLines
 }
 
+// sets align - 'left' 'right' 'center'
 function changeTxtSide(side) {
     gMeme.lines.forEach(line => line.align = side)
 }
@@ -111,52 +114,42 @@ function changeFont(font) {
     gMeme.font = `px ${font}`
 }
 
-function saveMeme(url) {
-    const id = makeId()
+function saveMeme() {
     const meme = { ...gMeme }
-    meme.selectedImgId = id
 
-    gSavedImgs.push({ id, url })
-    gSavedMemes.push(meme)
+    meme.id = makeId()
+    gMyMemes.push(meme)
 
-    saveToStorage(IMG_STORAGE_KEY, gSavedImgs)
-    saveToStorage(MEME_STORAGE_KEY, gSavedMemes)
+    saveToStorage(MEME_STORAGE_KEY, gMyMemes)
 }
 
 function _loadMemes() {
     let memes = loadFromStorage(MEME_STORAGE_KEY)
-    let imgs = loadFromStorage(IMG_STORAGE_KEY)
 
     // If nothing in storage - creates an empty array
-    if (!memes || !memes.length || !imgs || !imgs.length) {
-        memes = []
-        imgs = []
-    }
+    if (!memes || !memes.length) memes = []
 
-    gSavedMemes = memes
-    gSavedImgs = imgs
+    gMyMemes = memes
+    saveToStorage(MEME_STORAGE_KEY, gMyMemes)
 }
 
-function getgSavedImgs() {
-    return gSavedImgs
+function getMyMemes() {
+    return gMyMemes
 }
 
-function setgSavedImgs(savedImgs) {
-    gSavedImgs = savedImgs
-}
-
-function getgSavedMemes() {
-    return gSavedMemes
-}
-
-function setgSavedMemes(savedMemes) {
-    gSavedMemes = savedMemes
-}
-
-function getgKeywordSearchCountMap() {
+function getKeywordSearchCountMap() {
     return gKeywordSearchCountMap
 }
 
-function setgKeywordSearchCountMap() {
+function setKeywordSearchCountMap() {
     return gKeywordSearchCountMap
+}
+
+function saveToStorage(key, val) {
+    localStorage.setItem(key, JSON.stringify(val))
+}
+
+function loadFromStorage(key) {
+    var val = localStorage.getItem(key)
+    return JSON.parse(val)
 }

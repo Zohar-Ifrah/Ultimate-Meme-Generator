@@ -6,14 +6,8 @@
     }
 
     .meme-editor-continer {
-        /* justify-content: space-between; */
         padding: 10px;
         height: 400px;
-    }
-
-    .editor-page{
-        display: flex;
-        flex-direction: column;
     }
 }
 
@@ -95,10 +89,6 @@
 
 /* SMALL */
 @media (min-width: 705px) {
-    :root {
-        --site-width: var(--s);
-    }
-
     .logo {
         font-size: 1.7em;
     }
@@ -116,11 +106,6 @@
 
 /* MEDIUM */
 @media (min-width: 900px) {
-    :root {
-        --site-width: var(--m);
-        --clp-bottom: 80px;
-    }
-
     .btn-menu {
         display: none;
     }
@@ -143,18 +128,9 @@
         width: 80%;
         margin: 30px auto;
     }
-    .editor-page{
+
+    .editor-page {
         width: 90%;
         margin: 30px auto;
     }
-
-}
-
-/* LARGE */
-@media (min-width: 1160px) {
-    :root {
-        --site-width: var(--l);
-        --clp-bottom: 120px;
-    }
-
 }

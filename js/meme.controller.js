@@ -6,7 +6,7 @@ var gElCanvas
 var gCtx
 var gCurrPage = 'Gallery'
 var gSwitchDir = '-'
-var isDownload = false
+var gIsDownloading = false
 
 function onInit() {
     gElCanvas = document.getElementById('canvas')
@@ -20,7 +20,7 @@ function onInit() {
 
 // render the gallery imgs from service gImgs 
 function renderGallery(filter = null) {
-    const imgs = getgImgs()
+    const imgs = getImgs()
     let filteredImgs = imgs
 
     if (filter !== null) {
@@ -34,20 +34,35 @@ function renderGallery(filter = null) {
     document.querySelector('.imgs-gallery-container').innerHTML = strHTML
 }
 
+// render imgs saved in storage
+// + toggle hide / show msg if there isnt saved memes
 function renderMyMemes() {
-    const imgs = getgSavedImgs()
+    const myMemes = getMyMemes()
+    elMsg = document.querySelector('.empty-gallery-msg').classList
+    elMsg.add('hide')
+    if (myMemes.length === 0) { // no saved memes
+        elMsg.remove('hide')
+        return
+    }
+
+    const imgs = getImgs()
+    const myImgs = []
+    myMemes.forEach(meme => {
+        const matchImg = imgs.find(img => img.id === meme.selectedImgId)
+        if (matchImg) myImgs.push(matchImg)
+    })
 
     var strHTML = ''
-    strHTML += imgs.map((img) => `
-    <img src="${img.url}" alt="Click to open" onclick="onMyMemeSelect(this)">`
+    strHTML += myImgs.map((img, idx) => `
+    <img src="${img.url}" alt="Click to open" onclick="onSelectMyMeme('${myMemes[idx].id}')">`
     ).join('')
 
     document.querySelector('.memes-gallery-container').innerHTML = strHTML
 }
 
-function renderImg() {
-    const imgs = getgImgs()
-    const currMeme = getgMeme()
+function renderMeme() {
+    const imgs = getImgs()
+    const currMeme = getMeme()
     const elImg = new Image()
     const CurrLinesSelected = currMeme.lines[currMeme.selectedLineIdx]
 
@@ -61,7 +76,6 @@ function renderImg() {
         currMeme.lines.forEach((line) => {
 
             //setting coords according to the aling value
-
             if (line.align === 'center') line.pos.x = gElCanvas.width / 2
             else if (line.align === 'right') line.pos.x = gElCanvas.width - 10
             else if (line.align === 'left') line.pos.x = 10
@@ -109,7 +123,7 @@ function renderImg() {
         handelHTML('stroke-color', CurrLinesSelected.strokeColor)
 
         // rect drawing:
-        if (gCtx.measureText(CurrLinesSelected.txt).width === 0 || isDownload) return // if there is no txt 
+        if (gCtx.measureText(CurrLinesSelected.txt).width === 0 || gIsDownloading) return // if there is no txt 
         gCtx.strokeStyle = 'black'
         gCtx.lineWidth = 2
 
@@ -136,11 +150,11 @@ function renderImg() {
 
 // live render img and txt while typing
 function onTyping(val) { // gets: value (text from input)
-    const currMeme = getgMeme()
+    const currMeme = getMeme()
     currMeme.lines[currMeme.selectedLineIdx].txt = val
 
-    setgMeme(currMeme)
-    renderImg()
+    setMeme(currMeme)
+    renderMeme()
 }
 
 // when clicked on img from gallery: reset lines to 1
@@ -149,37 +163,34 @@ function onImgSelect(img) {  // gets: this (element)
     resetLines()
     addMemeLine()
 
-    const imgs = getgImgs()
-    const currMeme = getgMeme()
+    const imgs = getImgs()
+    const currMeme = getMeme()
     const imgIdx = imgs.findIndex(memeImg => memeImg.url === img.getAttribute('src'))
 
     currMeme.selectedImgId = imgIdx + 1
 
-    setgMeme(currMeme)
-    renderImg()
-    togglePages('Editor')
+    setMeme(currMeme)
+    renderMeme()
+    onTogglePages('Editor')
 }
 
-function onMyMemeSelect(img) {
-    // resetLines()
+// to re edit meme that saved already
+function onSelectMyMeme(memeId) { // gets meme id as 'str' that can be find on myMemes
+    resetLines()
 
-    // const imgs = getgSavedImgs()
-    // const memes = getgSavedMemes()
-
-    // const imgIdx = imgs.findIndex(memeImg => memeImg.url === img.getAttribute('src')) //get img IDX
-    // const memeIdx = memes.findIndex(meme => meme.selectedImgId === imgs[imgIdx].id)
-
-    // setgMeme(memes[memeIdx])
-    // renderImg(true)    // to fix and adjust
-    onFlexibleSelect() // until fixed
-    // togglePages('Editor')
+    const myMemes = getMyMemes()
+    const memeSelected = myMemes.find(meme => meme.id === memeId)
+    console.log(memeSelected)
+    setMeme(memeSelected)
+    renderMeme()
+    onTogglePages('Editor')
 }
 
 // add a default line from services
 // sets the selectedLineIdx (focus) on last text
 function onAddLine() {
     addMemeLine()
-    renderImg()
+    renderMeme()
 }
 
 // delete txt lines and sets selectedLineIdx (focus)
@@ -187,13 +198,13 @@ function onAddLine() {
 function onDeleteLine() {
     deleteLine()
     handelHTML('meme-text-input', '')
-    renderImg()
+    renderMeme()
 }
 
 // switch txt lines focus using gSwitchDir ('+' or '-')
 // when gets to last laine gSwitchDir = '-' when first line = '+'
 function onSwitchLine() {
-    const currMeme = getgMeme()
+    const currMeme = getMeme()
     const linesCount = currMeme.lines.length
 
     if (linesCount < 2) return // if there are no lines
@@ -204,29 +215,38 @@ function onSwitchLine() {
     if (gSwitchDir === '+' && currMeme.selectedLineIdx < linesCount - 1) currMeme.selectedLineIdx++
     else if (gSwitchDir === '-' && currMeme.selectedLineIdx > 0) currMeme.selectedLineIdx--
 
-    setgMeme(currMeme)
-    renderImg()
+    setMeme(currMeme)
+    renderMeme()
 }
 
 // sets the fill and stroke color of the text
 function onChageColor(colorType, val) { // id (color: fill/stroke), value (color)
-    const currMeme = getgMeme()
+    const currMeme = getMeme()
     const memeLines = currMeme.lines[currMeme.selectedLineIdx]
 
     colorType === 'fill-color' ?
         memeLines.fillColor = val : memeLines.strokeColor = val
 
-    setgMeme(currMeme)
-    renderImg()
+    setMeme(currMeme)
+    renderMeme()
 }
 
 // Switching between pages using gCurrPage (only toggle display none)
-function togglePages(pageStr) {// gets: 'Gallery', 'Meme', 'About
+// handels hamburger closing when its on
+function onTogglePages(pageStr) {// gets: 'Gallery', 'Meme', 'About
     if (pageStr === gCurrPage.toLowerCase()) return // if same page clicked
 
     document.querySelector('.' + gCurrPage.toLowerCase() + '-page').classList.add('hide')
     gCurrPage = pageStr
     document.querySelector('.' + gCurrPage.toLowerCase() + '-page').classList.remove('hide')
+    // handels hamburger closing
+    const elBody = document.body
+    if (elBody.classList.contains('menu-open')) elBody.classList.remove('menu-open')
+    // hadnels search placeholder
+    if (gCurrPage.toLowerCase() === 'gallery') {
+        document.querySelector('.search-input').value = ''
+        renderGallery()
+    }
 }
 
 // fits the text or color to the current appearance
@@ -235,7 +255,7 @@ function handelHTML(toHandel, val) { // toHandel: class name (str), val: value t
     const elCurrDoc = document.getElementById(toHandel)
     elCurrDoc.value = val
     if (toHandel === 'meme-text-input') {
-        const currMeme = getgMeme()
+        const currMeme = getMeme()
         if (currMeme.lines.length === 0) { // if empty
             elCurrDoc.disabled = true
             elCurrDoc.placeholder = 'to edit meme please add a line (plus button)'
@@ -254,32 +274,32 @@ function handelHTML(toHandel, val) { // toHandel: class name (str), val: value t
 
 // gets: '+' or '-' for increase / decrease font size
 function onChageFontSize(symbol) {
-    const currMeme = getgMeme()
+    const currMeme = getMeme()
     symbol === '+' ? currMeme.lines[currMeme.selectedLineIdx].size += 1
         : currMeme.lines[currMeme.selectedLineIdx].size -= 1
 
-    setgMeme(currMeme)
-    renderImg()
+    setMeme(currMeme)
+    renderMeme()
 }
 
 // gets: 'left', 'right', 'center' and change txt side
 function onChageTxtSide(side) {
     changeTxtSide(side)
-    renderImg()
+    renderMeme()
 }
 
 // gets a prepared font as str to put on canvas
 function onChangeFont(font) {
     changeFont(font)
-    renderImg()
+    renderMeme()
 }
 
 // flexible render random img and random ready text (or 2) from a prepared array
 function onFlexibleSelect() {
-    const imgs = getgImgs()
-    const randMeme = getgMeme()
-    const randOneLineTxts = getgTxtsOneLine()
-    const randTwoLineTxts = getgTxtsTwoLines()
+    const imgs = getImgs()
+    const randMeme = getMeme()
+    const randOneLineTxts = getTxtsOneLine()
+    const randTwoLineTxts = getTxtsTwoLines()
     let linesIdxCount = getRandomIntInclusive(0, 1)
     const randNum = getRandomIntInclusive(0, randOneLineTxts.length - 1)
     resetLines()
@@ -298,9 +318,9 @@ function onFlexibleSelect() {
         randMeme.lines[i].strokeColor = getRandomColor()
     }
 
-    setgMeme(randMeme)
-    renderImg()
-    togglePages('Editor')
+    setMeme(randMeme)
+    renderMeme()
+    onTogglePages('Editor')
 }
 
 // disabled or avtive the btns if there are no lines 
@@ -312,46 +332,34 @@ function handelBtns(isDisable) {
 }
 
 // download img to user's pc
-function downloadImg(elLink) { //to fix: (avoid rekt before dl)
-    isDownload = true
-    renderImg()
-
-    const imgContent = gElCanvas.toDataURL('image/jpeg') // image/jpeg the default format
-    elLink.href = imgContent
-    isDownload = false
+function onDownloadImg() {
+    gIsDownloading = true // when true >> rect is off
+    renderMeme()
+    var imgContent = gElCanvas.toDataURL('image/jpeg') // image/jpeg the default format
+    var link = document.querySelector('.dl-btn')
+    link.download = 'my-meme.jpg'
+    link.href = imgContent
+    // link.click()
+    gIsDownloading = false
 }
 
 // saving meme details and img in services
 // can retrive data and edit again
 function onSavingMeme() {
-    const imgContent = gElCanvas.toDataURL('image/jpeg')
-    doUploadImg(imgContent, url => saveMeme(url))
+    saveMeme()
+
     renderMyMemes()
-    renderMyMemes()
+    onTogglePages('meme')
 }
 
+// for smaller screens >> handels hamburger
 function onToggleMenu() {
     document.body.classList.toggle('menu-open')
 }
 
-function onImgInput() {
-    resetLines()
-    addMemeLine()
-
-    const imgs = getgImgs()
-    const currMeme = getgMeme()
-    const imgIdx = imgs.findIndex(memeImg => memeImg.url === img.getAttribute('src'))
-
-    currMeme.selectedImgId = imgIdx + 1
-
-    setgMeme(currMeme)
-    renderImg()
-    togglePages('Editor')
-}
-
+// sorts by Keywords >> render the gallery
 function onSearchInput(elSearch) {
     const keyWord = elSearch.value
-    // const keyWords = getgKeywordSearchCountMap() //to add value
     renderGallery(keyWord)
 }
 
@@ -382,7 +390,7 @@ function addTouchListeners() {
 
 function onDown(ev) {
     const pos = getEvPos(ev)  //gets pos pressed on
-    const currMeme = getgMeme()
+    const currMeme = getMeme()
     const rectArea = currMeme.lines[currMeme.selectedLineIdx].rectArea
 
     //if inside the rect
@@ -395,7 +403,7 @@ function onDown(ev) {
 
 function onMove(ev) {
     const pos = getEvPos(ev) // gets the spot pressing on (every sec)
-    const currMeme = getgMeme()
+    const currMeme = getMeme()
     const rectArea = currMeme.lines[currMeme.selectedLineIdx].rectArea
     if (pos.x >= rectArea.xStart && pos.x <= rectArea.xEnd
         && pos.y >= rectArea.yStart && pos.y <= rectArea.yEnd) {
@@ -405,9 +413,7 @@ function onMove(ev) {
     if (!gIsDraged) return
 
     document.body.style.cursor = 'grabbing'
-    // const currMeme = getgMeme()
     const currLine = currMeme.lines[currMeme.selectedLineIdx]
-    // const pos = getEvPos(ev) // gets the spot pressing on (every sec)
 
     // Calc the delta, the diff moved
     const dx = pos.x - gStartPos.x
@@ -421,8 +427,8 @@ function onMove(ev) {
     if (currLine.align === 'left') currLine.align = 'drag-left'
     // currLine.align = 'drag'
     gStartPos = pos // update last pos
-    setgMeme(currMeme)
-    renderImg()
+    setMeme(currMeme)
+    renderMeme()
 }
 
 function onUp() {
@@ -452,11 +458,17 @@ function getEvPos(ev) {
     return pos
 }
 
-// to fix:
-// choose file btn
-// avoid rekt before save
+// function onImgInput() {
+//     resetLines()
+//     addMemeLine()
 
-// memes on storage
-// on save: to render imgs after save
+//     const imgs = getImgs()
+//     const currMeme = getMeme()
+//     const imgIdx = imgs.findIndex(memeImg => memeImg.url === img.getAttribute('src'))
 
+//     currMeme.selectedImgId = imgIdx + 1
 
+//     setMeme(currMeme)
+//     renderMeme()
+//     onTogglePages('Editor')
+// }

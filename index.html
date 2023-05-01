@@ -12,43 +12,50 @@
 <body class="main-layout" onload="onInit()">
 
     <div class="main-screen" onclick="onToggleMenu()"></div>
-    <header class="main-header flex space-between align-center">
-        <div class="logo">Meme-Generator</div>
-        <nav class="main-nav-container flex">
+
+    <header class="main-header">
+        <div class="logo" onclick="onTogglePages('Gallery')">Meme-Generator</div>
+        <nav class="main-nav-container">
+
             <div class="main-nav">
-                <label data-page="Gallery" onclick="togglePages(this.dataset.page)">Gallery</label>
-                <label data-page="Meme" onclick="togglePages(this.dataset.page)">My Memes</label>
-                <label data-page="About" onclick="togglePages(this.dataset.page)">About</label>
+                <label data-page="Gallery" onclick="onTogglePages(this.dataset.page)">Gallery</label>
+                <label data-page="Meme" onclick="onTogglePages(this.dataset.page)">My Memes</label>
+                <label data-page="About" onclick="onTogglePages(this.dataset.page)">About</label>
             </div>
         </nav>
-        <button class="btn-menu" onclick="onToggleMenu()">☰</button>
+        <button class="btn-menu" onclick="onToggleMenu(this)">☰</button>
     </header>
 
-    <main class="editor-page flex space-between hide">
+    <main class="editor-page hide">
 
         <div class="canvas-container">
-            <canvas id="canvas" width="500" height="500"></canvas>
+            <canvas id="canvas" width="400" height="400"></canvas>
         </div>
 
-        <div class="meme-editor-container flex space-between">
+        <div class="meme-editor-container">
             <input id="meme-text-input" type="text" placeholder="type your meme here" oninput="onTyping(value)">
-            <div class="first-section-btns">
-                <button onclick="onSwitchLine()"><img src="icons/up-and-down-opposite-double-arrows-side-by-side.png"
+
+            <section class="first-section-btns">
+                <button class="focus-btn" onclick="onSwitchLine()"><img
+                        src="icons/up-and-down-opposite-double-arrows-side-by-side.png" alt=""></button>
+                <button class="add-btn" onclick="onAddLine()"><img src="icons/add.png" alt=""></button>
+                <button class="trash-btn" onclick="onDeleteLine()"><img src="icons/trash.png" alt=""></button>
+            </section>
+
+            <section class="second-section-btns">
+                <button class="increase-btn btn" onclick="onChageFontSize('+')"><img
+                        src="icons/increase font - icon.png" alt=""></button>
+                <button class="decrease-btn btn" onclick="onChageFontSize('-')"><img
+                        src="icons/decrease font - icon.png" alt=""></button>
+                <button class="align-left-btn btn" onclick="onChageTxtSide('left')"><img src="icons/align-to-left.png"
                         alt=""></button>
-                <button onclick="onAddLine()"><img src="icons/add.png" alt=""></button>
-                <button onclick="onDeleteLine()"><img src="icons/trash.png" alt=""></button>
-            </div>
-            <div class="second-section-btns">
-                <button class="increase-btn" onclick="onChageFontSize('+')"><img src="icons/increase font - icon.png"
-                        alt=""></button>
-                <button class="decrease-btn" onclick="onChageFontSize('-')"><img src="icons/decrease font - icon.png"
-                        alt=""></button>
-                <button class="align-left-btn" onclick="onChageTxtSide('left')"><img src="icons/align-to-left.png"
-                        alt=""></button>
-                <button class="align-center-btn" onclick="onChageTxtSide('center')"><img
+                <button class="align-center-btn btn" onclick="onChageTxtSide('center')"><img
                         src="icons/center-text-alignment.png" alt=""></button>
-                <button class="align-right-btn" onclick="onChageTxtSide('right')"><img src="icons/align-to-right.png"
-                        alt=""></button>
+                <button class="align-right-btn btn" onclick="onChageTxtSide('right')"><img
+                        src="icons/align-to-right.png" alt=""></button>
+            </section>
+
+            <section class="third-section-btns">
                 <select onchange="onChangeFont(this.value)">
                     <option value="cursive">Impact</option>
                     <option value="sans-serif">Arial</option>
@@ -68,25 +75,24 @@
                     <option value="Lucida Sans Unicode">Lucida Sans Unicode</option>
                     <option value="Trebuchet MS">Trebuchet MS</option>
                 </select>
-
-                <!-- <button><img src="icons/text stroke.png" alt="" type="color"></button>
-                <button><img src="icons/paint-board-and-brush.png" alt=""></button> -->
                 <input class="input-color" oninput="onChageColor(id, value)" type="color" id="fill-color">
                 <input class="input-color" oninput="onChageColor(id, value)" type="color" id="stroke-color">
-            </div>
+            </section>
 
-            <!-- To add Slide Bar -->
-            <button class="btn" onclick="onSavingMeme()">Save</button>
-            <button class="btn" onclick="onUploadImg()">Share</button>
-            <a href="#" class="dl-btn btn" onclick="downloadImg(this)" download="my-meme.jpg">Download</a>
+            <section class="fourth-section-btns">
+                <!-- TO ADD Slide Bar -->
+                <button class="btn" onclick="onSavingMeme()">Save</button>
+                <button class="btn" onclick="onUploadImg()">Share</button>
+                <a href="#" class="dl-btn" onclick="onDownloadImg()">Download</a>
+            </section>
         </div>
-
     </main>
 
     <div class="gallery-page">
+
         <section class="gallery-nav-bar">
-            <input type="search" class="search-input" name="search" oninput="onSearchInput(this)" placeholder="search by category"/>
-            <!-- <input type="file" class="file-input btn" name="image" onchange="onImgInput(event)" /> -->
+            <input type="search" class="search-input" name="search" oninput="onSearchInput(this)"
+                placeholder="search by category" />
             <button onclick="onFlexibleSelect()">I'm flexible</button>
             <!-- TO ADD KEY WORDS -->
         </section>
@@ -97,6 +103,12 @@
     <div class="meme-page hide">
         <h1>My Memes</h1>
         <main class="memes-gallery-container"></main>
+
+        <section class="empty-gallery-msg">
+            <h2>You did not save any meme yet</h2>
+            <img src="meme-imgs/be-strong.jpg">
+        </section>
+
     </div>
 
     <div class="about-page hide">
@@ -113,11 +125,9 @@
     </div>
 
     <script src="js/services/util.services.js"></script>
-    <script src="js/services/gallery.services.js"></script>
     <script src="js/services/meme.services.js"></script>
-    <script src="js/gallery.controller.js"></script>
+    <script src="js/share.and.dl.js"></script>
     <script src="js/meme.controller.js"></script>
-    <script src="js/share-and-dl.js"></script>
 </body>
 
 </html>
