@@ -22,3 +22,8 @@ Contributions are welcome! Please submit a pull request or open an issue to disc
 
 ## Important Links
 - [Live Demo]([https://link-to-live-demo.com](https://zohar-ifrah.github.io/Ultimate-Meme-Generator/))
+
+## Author
+
+Zohar Ifrah – Full-Stack Developer  
+[LinkedIn](https://www.linkedin.com/in/zohar-ifrah)
