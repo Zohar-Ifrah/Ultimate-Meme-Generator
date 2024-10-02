@@ -17,7 +17,6 @@ This project is a meme generator that allows users to create and customize memes
 Contributions are welcome! Please submit a pull request or open an issue to discuss potential changes.
 
 ## Credits
-- Developed by Zohar Ifrah
 - Images provided by various sources
 
 ## Important Links
